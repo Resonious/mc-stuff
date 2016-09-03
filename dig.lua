@@ -6,10 +6,22 @@ if #tArgs ~= 1 then
 	return
 end
 
+-- Set up network connection:
+
+local modem = peripheral.wrap("right")
+local function message(msg)
+	modem.transmit(1, 2, "msg:"..msg)
+end
+
+local function pmsg(msg)
+	print(msg)
+	message(msg)
+end
+
 -- Mine in a quarry pattern until we hit something we can't dig
 local size = tonumber( tArgs[1] )
 if size < 1 then
-	print( "Excavate diameter must be positive" )
+	pmsg( "Excavate diameter must be positive" )
 	return
 end
 
@@ -24,7 +36,7 @@ local goTo -- Filled in further down
 local refuel -- Filled in further down
 
 local function unload( _bKeepOneFuelStack )
-	print( "Unloading items..." )
+	pmsg( "Unloading items..." )
 	for n=1,16 do
 		local nCount = turtle.getItemCount(n)
 		if nCount > 0 then
@@ -46,13 +58,13 @@ end
 
 local function returnSupplies()
 	local x,y,z,xd,zd = xPos,depth,zPos,xDir,zDir
-	print( "Returning to surface..." )
+	pmsg( "Returning to surface..." )
 	goTo( 0,0,0,0,-1 )
 
 	local fuelNeeded = 2*(x+y+z) + 1
 	if not refuel( fuelNeeded ) then
 		unload( true )
-		print( "Waiting for fuel" )
+		pmsg( "Waiting for fuel" )
 		while not refuel( fuelNeeded ) do
 			os.pullEvent( "turtle_inventory" )
 		end
@@ -60,7 +72,7 @@ local function returnSupplies()
 		unload( true )
 	end
 
-	print( "Resuming mining..." )
+	pmsg( "Resuming mining..." )
 	goTo( x,y,z,xd,zd )
 end
 
@@ -78,12 +90,12 @@ local function collect()
 	if nTotalItems > collected then
 		collected = nTotalItems
 		if math.fmod(collected + unloaded, 50) == 0 then
-			print( "Mined "..(collected + unloaded).." items." )
+			pmsg( "Mined "..(collected + unloaded).." items." )
 		end
 	end
 
 	if bFull then
-		print( "No empty slots left." )
+		pmsg( "No empty slots left." )
 		return false
 	end
 	return true
@@ -121,7 +133,7 @@ end
 
 local function tryForwards()
 	if not refuel() then
-		print( "Not enough Fuel" )
+		pmsg( "Not enough Fuel" )
 		returnSupplies()
 	end
 
@@ -150,7 +162,7 @@ end
 
 local function tryDown()
 	if not refuel() then
-		print( "Not enough Fuel" )
+		pmsg( "Not enough Fuel" )
 		returnSupplies()
 	end
 
@@ -174,7 +186,7 @@ local function tryDown()
 
 	depth = depth + 1
 	if math.fmod( depth, 10 ) == 0 then
-		print( "Descended "..depth.." metres." )
+		pmsg( "Descended "..depth.." metres." )
 	end
 
 	return true
@@ -273,11 +285,11 @@ function goTo( x, y, z, xd, zd )
 end
 
 if not refuel() then
-	print( "Out of Fuel" )
+	pmsg( "Out of Fuel" )
 	return
 end
 
-print( "Excavating..." )
+pmsg( "Excavating..." )
 
 local reseal = false
 turtle.select(1)
@@ -339,7 +351,7 @@ while not done do
 	end
 end
 
-print( "Returning to surface..." )
+pmsg( "Returning to surface..." )
 
 -- Return to where we started
 goTo( 0,0,0,0,-1 )
@@ -351,4 +363,4 @@ if reseal then
 	turtle.placeDown()
 end
 
-print( "Mined "..(collected + unloaded).." items total." )
+pmsg( "Mined "..(collected + unloaded).." items total." )
