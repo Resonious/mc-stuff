@@ -35,7 +35,7 @@ local function receive()
   modem.open(1)
 
   while true do
-    local event, side, replyCh, message, dist = os.pullEvent("modem_message")
+    local x, event, side, replyCh, message, dist = os.pullEvent("modem_message")
 
     local prefix = string.sub(message,0,4)
     local payload = string.sub(message,5)
