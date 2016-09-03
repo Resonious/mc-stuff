@@ -36,6 +36,15 @@ local function receive()
 
   while true do
     local event, side, replyCh, message, dist = os.pullEvent("modem_message")
+
+    local prefix = string.sub(message,0,4)
+    local payload = string.sub(message,5)
+
+    if prefix == "msg:" then
+      turtleState.message = payload
+    else
+      print("BAD MODEM MESSAGE: "..message)
+    end
   end
 end
 
