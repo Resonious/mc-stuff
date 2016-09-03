@@ -19,7 +19,7 @@ local function render()
 
   -- Render turtle state
   glass.addBox(x,y, 100,50, 0xFFFF00, 0.2)
-  glass.addText(x+4,y+1, turtleState.message, 0x000000)
+  glass.addText(1,1, turtleState.message, 0x000000)
 
   glass.sync()
 end
