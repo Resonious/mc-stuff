@@ -1,4 +1,4 @@
-glass = peripheral.wrap("left")
+local glass = peripheral.wrap("left")
 
 function addBox()
   glass.addBox(1,1,80,10,0xFFFFFF,0.2)
