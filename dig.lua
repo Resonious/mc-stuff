@@ -96,17 +96,28 @@ local function returnSupplies()
 end
 
 local function collect()
-	reportInv()
-
 	local bFull = true
 	local nTotalItems = 0
 	for n=1,16 do
-		local nCount = turtle.getItemCount(n)
+		local data = turtle.getItemDetail(n)
+		local nCount = 0
+
+		if data then
+			nCount = data.count
+			if data.name == "minecraft:cobblestone" then
+				local oldS = turtle.getSelectedSlot()
+				turtle.select(n) turtle.dropUp() turtle.select(oldS)
+				nCount = 0
+			end
+		end
+
 		if nCount == 0 then
 			bFull = false
 		end
 		nTotalItems = nTotalItems + nCount
 	end
+
+	reportInv()
 
 	if nTotalItems > collected then
 		collected = nTotalItems
