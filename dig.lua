@@ -386,4 +386,4 @@ if reseal then
 	turtle.placeDown()
 end
 
-pmsg( "Mined "..(collected + unloaded).." items total." )
+pmsg( "DONE! Mined "..(collected + unloaded).." items total." )
