@@ -91,7 +91,7 @@ local function returnSupplies()
 	goTo(xOffs, yOffs, zOffs, xd, zd)
 	goHome(-1)
 
-	local fuelNeeded = 2*(x+y+z+xOffs+yOffs+zOffs) + 2
+	local fuelNeeded = 2*(x+y+z) + 2
 	if not refuel( fuelNeeded ) then
 		unload( 3 )
 		pmsg( "Waiting for fuel" )
