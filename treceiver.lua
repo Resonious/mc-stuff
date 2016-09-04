@@ -46,8 +46,9 @@ local function receive()
     if prefix == "msg:" then
       turtleState.message = payload
       print("turtle: "..payload)
-    else
-      print("BAD MODEM MESSAGE: "..message)
+    elseif prefix == "inv:" then
+      turtleState.items = payload
+      write(payload)
     end
   end
 end
