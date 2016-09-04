@@ -35,11 +35,6 @@ local function reportInv()
 	modem.transmit(1,2, report)
 end
 
--- TODO test stuff:
-reportInv()
-print("reported?")
-return
-
 -- Mine in a quarry pattern until we hit something we can't dig
 local size = tonumber( tArgs[1] )
 if size < 1 then
@@ -99,6 +94,8 @@ local function returnSupplies()
 end
 
 local function collect()
+	reportInv()
+
 	local bFull = true
 	local nTotalItems = 0
 	for n=1,16 do
