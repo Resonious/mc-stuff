@@ -88,9 +88,10 @@ end
 local function returnSupplies()
 	local x,y,z,xd,zd = xPos,depth,zPos,xDir,zDir
 	pmsg( "Returning to surface..." )
+	goTo(xOffs, yOffs, zOffs, xd, zd)
 	goHome(-1)
 
-	local fuelNeeded = 2*(x+y+z) + 1
+	local fuelNeeded = 2*(x+y+z+xOffs+yOffs+zOffs) + 2
 	if not refuel( fuelNeeded ) then
 		unload( 3 )
 		pmsg( "Waiting for fuel" )
@@ -248,15 +249,14 @@ local function turnRight()
 end
 
 function goHome(zd)
-	goStart()
 	goTo(0, 0, 0, 0, zd)
 end
 
 function goStart()
-	goTo(xOffs, yOffs, zOffs, 0, 1)
+	goTo(xOffs, yOffs, zOffs, 0, 1, {moveFirst='z'})
 end
 
-function goTo( x, y, z, xd, zd )
+function goTo( x, y, z, xd, zd, opts )
 	while depth > y do
 		if turtle.up() then
 			depth = depth - 1
@@ -267,60 +267,77 @@ function goTo( x, y, z, xd, zd )
 		end
 	end
 
-	if xPos > x then
-		while xDir ~= -1 do
-			turnLeft()
-		end
-		while xPos > x do
-			if turtle.forward() then
-				xPos = xPos - 1
-			elseif turtle.dig() or turtle.attack() then
-				collect()
-			else
-				sleep( 0.5 )
+	local function moveX()
+		if xPos > x then
+			while xDir ~= -1 do
+				turnLeft()
 			end
-		end
-	elseif xPos < x then
-		while xDir ~= 1 do
-			turnLeft()
-		end
-		while xPos < x do
-			if turtle.forward() then
-				xPos = xPos + 1
-			elseif turtle.dig() or turtle.attack() then
-				collect()
-			else
-				sleep( 0.5 )
+			while xPos > x do
+				if turtle.forward() then
+					xPos = xPos - 1
+				elseif turtle.dig() or turtle.attack() then
+					collect()
+				else
+					sleep( 0.5 )
+				end
+			end
+		elseif xPos < x then
+			while xDir ~= 1 do
+				turnLeft()
+			end
+			while xPos < x do
+				if turtle.forward() then
+					xPos = xPos + 1
+				elseif turtle.dig() or turtle.attack() then
+					collect()
+				else
+					sleep( 0.5 )
+				end
 			end
 		end
 	end
 
-	if zPos > z then
-		while zDir ~= -1 do
-			turnLeft()
-		end
-		while zPos > z do
-			if turtle.forward() then
-				zPos = zPos - 1
-			elseif turtle.dig() or turtle.attack() then
-				collect()
-			else
-				sleep( 0.5 )
+	local function moveZ()
+		if zPos > z then
+			while zDir ~= -1 do
+				turnLeft()
+			end
+			while zPos > z do
+				if turtle.forward() then
+					zPos = zPos - 1
+				elseif turtle.dig() or turtle.attack() then
+					collect()
+				else
+					sleep( 0.5 )
+				end
+			end
+		elseif zPos < z then
+			while zDir ~= 1 do
+				turnLeft()
+			end
+			while zPos < z do
+				if turtle.forward() then
+					zPos = zPos + 1
+				elseif turtle.dig() or turtle.attack() then
+					collect()
+				else
+					sleep( 0.5 )
+				end
 			end
 		end
-	elseif zPos < z then
-		while zDir ~= 1 do
-			turnLeft()
+	end
+
+	if opts then
+		if opts.moveFirst == 'z' then
+			moveZ()
+			moveX()
+		else
+			moveX()
+			moveZ()
 		end
-		while zPos < z do
-			if turtle.forward() then
-				zPos = zPos + 1
-			elseif turtle.dig() or turtle.attack() then
-				collect()
-			else
-				sleep( 0.5 )
-			end
-		end
+	else
+		moveX()
+		moveZ()
 	end
 
 	while depth < y do
@@ -411,6 +428,7 @@ end
 pmsg( "Returning to surface..." )
 
 -- Return to where we started
+goStart()
 goHome(-1)
 unload( 0 )
 goHome(1)
