@@ -31,11 +31,14 @@ local function render()
   y = y + 12
 
   -- Render turtle state
-  glass.addBox(x,y, 150,150, 0xFFFF00, 0.2)
+  local itemLines = split(turtleState.items, "\n")
+  local h = 13 + #itemLines * 10
+
+  glass.addBox(x,y, 150,h, 0xFFFF00, 0.2)
   glass.addText(x+4,y+1, turtleState.message, 0x000000)
   y = y + 11
 
-  for i,str in ipairs(split(turtleState.items, "\n")) do
+  for i,str in ipairs(itemLines) do
     glass.addText(x+4,y+1, str, 0x000000)
     y = y + 9
   end
