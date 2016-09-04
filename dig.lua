@@ -6,7 +6,7 @@ if #tArgs ~= 1 then
 	return
 end
 
--- Set up network connection:
+-- Network functions for reporting stuff:
 
 local modem = peripheral.wrap("right")
 local function message(msg)
@@ -17,6 +17,29 @@ local function pmsg(msg)
 	print(msg)
 	message(msg)
 end
+
+local function reportInv()
+	turtle.select(1)
+	local details = {}
+
+	for n=1,16 do
+		local detail = turtle.getItemDetail(n)
+		if ~details[detail.name] then details[detail.name] = 0 end
+		details[detail.name] = details[detail.name] + detail.count
+	end
+
+	local report = "inv:"
+	for name,count in pairs(details) do
+		report = report..name..": x"..count.."\n"
+	end
+
+	modem.transmit(1,2, report)
+end
+
+-- TODO test stuff:
+reportInv()
+print("reported?")
+return
 
 -- Mine in a quarry pattern until we hit something we can't dig
 local size = tonumber( tArgs[1] )

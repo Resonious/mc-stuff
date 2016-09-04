@@ -2,7 +2,8 @@ local glass = peripheral.wrap("left")
 local modem = peripheral.wrap("back")
 
 local turtleState = {
-  message = "no message yet"
+  message = "no message yet",
+  items   = "...\nno item report yet"
 }
 
 local function render()
@@ -18,8 +19,10 @@ local function render()
   y = y + 12
 
   -- Render turtle state
-  glass.addBox(x,y, 100,10, 0xFFFF00, 0.2)
+  glass.addBox(x,y, 150,150, 0xFFFF00, 0.2)
   glass.addText(x+4,y+1, turtleState.message, 0x000000)
+  y = y + 10
+  glass.addText(x+4,y+1, turtleState.items, 0x000000)
 
   glass.sync()
 end
@@ -42,6 +45,7 @@ local function receive()
 
     if prefix == "msg:" then
       turtleState.message = payload
+      print("turtle: "..payload)
     else
       print("BAD MODEM MESSAGE: "..message)
     end
