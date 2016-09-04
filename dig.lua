@@ -24,7 +24,7 @@ local function reportInv()
 
 	for n=1,16 do
 		local detail = turtle.getItemDetail(n)
-		if ~details[detail.name] then details[detail.name] = 0 end
+		if details[detail.name] == nil then details[detail.name] = 0 end
 		details[detail.name] = details[detail.name] + detail.count
 	end
 
