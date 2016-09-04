@@ -23,7 +23,7 @@ local function reportInv()
 
 	for n=1,16 do
 		local detail = turtle.getItemDetail(n)
-		if detail
+		if detail then
 			if details[detail.name] == nil then details[detail.name] = 0 end
 			details[detail.name] = details[detail.name] + detail.count
 		end
@@ -104,7 +104,9 @@ local function collect()
 
 		if data then
 			nCount = data.count
-			if data.name == "minecraft:cobblestone" then
+
+			-- Drop cobblestone if we already have a stack
+			if data.name == "minecraft:cobblestone" && data.count == 64 then
 				local oldS = turtle.getSelectedSlot()
 				turtle.select(n) turtle.dropUp() turtle.select(oldS)
 				nCount = 0
