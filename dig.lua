@@ -22,7 +22,6 @@ end
 -- TODO test stuff:
 reportInv()
 print("reported?")
-return
 
 local tArgs = { ... }
 if #tArgs ~= 1 then
