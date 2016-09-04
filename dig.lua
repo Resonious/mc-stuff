@@ -1,8 +1,8 @@
 -- This is a modified copy of the build-in excavate program
 
 local tArgs = { ... }
-if #tArgs ~= 1 then
-	print( "Usage: excavate <diameter>" )
+if #tArgs < 1 or #tArgs > 4 then
+	print( "Usage: excavate <diameter> [<depth> <forward> <right>]" )
 	return
 end
 
@@ -44,6 +44,14 @@ if size < 1 then
 	return
 end
 
+local xOffs = 0
+local yOffs = 0
+local zOffs = 0
+
+if #tArgs >= 2 then yOffs = tonumber( tArgs[2] ) end
+if #tArgs >= 3 then zOffs = tonumber( tArgs[3] ) end
+if #tArgs >= 4 then xOffs = tonumber( tArgs[4] ) end
+
 local depth = 0
 local unloaded = 0
 local collected = 0
@@ -53,6 +61,8 @@ local xDir,zDir = 0,1
 
 local goTo -- Filled in further down
 local refuel -- Filled in further down
+local goHome -- Filled in further down
+local goStart -- Filled in further down
 
 local function unload( nKeepFuel )
 	pmsg( "Unloading items..." )
@@ -78,7 +88,7 @@ end
 local function returnSupplies()
 	local x,y,z,xd,zd = xPos,depth,zPos,xDir,zDir
 	pmsg( "Returning to surface..." )
-	goTo( 0,0,0,0,-1 )
+	goHome(-1)
 
 	local fuelNeeded = 2*(x+y+z) + 1
 	if not refuel( fuelNeeded ) then
@@ -92,6 +102,7 @@ local function returnSupplies()
 	end
 
 	pmsg( "Resuming mining..." )
+	goStart()
 	goTo( x,y,z,xd,zd )
 end
 
@@ -236,6 +247,15 @@ local function turnRight()
 	xDir, zDir = zDir, -xDir
 end
 
+function goHome(zd)
+	goStart()
+	goTo(0, 0, 0, 0, zd)
+end
+
+function goStart()
+	goTo(xOffs, yOffs, zOffs, 0, 1)
+end
+
 function goTo( x, y, z, xd, zd )
 	while depth > y do
 		if turtle.up() then
@@ -333,6 +353,9 @@ end
 
 local alternate = 0
 local done = false
+
+goStart()
+
 while not done do
 	for n=1,size do
 		for m=1,size-1 do
@@ -388,9 +411,9 @@ end
 pmsg( "Returning to surface..." )
 
 -- Return to where we started
-goTo( 0,0,0,0,-1 )
+goHome(-1)
 unload( 0 )
-goTo( 0,0,0,0,1 )
+goHome(1)
 
 -- Seal the hole
 if reseal then
