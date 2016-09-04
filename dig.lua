@@ -1,23 +1,5 @@
 -- This is a modified copy of the build-in excavate program
-
-local tArgs = { ... }
-if #tArgs ~= 1 then
-	print( "Usage: excavate <diameter>" )
-	return
-end
-
--- Network functions for reporting stuff:
-
 local modem = peripheral.wrap("right")
-local function message(msg)
-	modem.transmit(1, 2, "msg:"..msg)
-end
-
-local function pmsg(msg)
-	print(msg)
-	message(msg)
-end
-
 local function reportInv()
 	turtle.select(1)
 	local details = {}
@@ -36,10 +18,28 @@ local function reportInv()
 	modem.transmit(1,2, report)
 end
 
+
 -- TODO test stuff:
 reportInv()
 print("reported?")
 return
+
+local tArgs = { ... }
+if #tArgs ~= 1 then
+	print( "Usage: excavate <diameter>" )
+	return
+end
+
+-- Network functions for reporting stuff:
+
+local function message(msg)
+	modem.transmit(1, 2, "msg:"..msg)
+end
+
+local function pmsg(msg)
+	print(msg)
+	message(msg)
+end
 
 -- Mine in a quarry pattern until we hit something we can't dig
 local size = tonumber( tArgs[1] )
