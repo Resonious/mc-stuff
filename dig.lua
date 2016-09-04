@@ -54,16 +54,16 @@ local xDir,zDir = 0,1
 local goTo -- Filled in further down
 local refuel -- Filled in further down
 
-local function unload( _bKeepOneFuelStack )
+local function unload( nKeepFuel )
 	pmsg( "Unloading items..." )
 	for n=1,16 do
 		local nCount = turtle.getItemCount(n)
 		if nCount > 0 then
 			turtle.select(n)
 			local bDrop = true
-			if _bKeepOneFuelStack and turtle.refuel(0) then
+			if nKeepFuel > 0 and turtle.refuel(0) then
 				bDrop = false
-				_bKeepOneFuelStack = false
+				nKeepFuel = nKeepFuel - 1
 			end
 			if bDrop then
 				turtle.drop()
@@ -82,13 +82,13 @@ local function returnSupplies()
 
 	local fuelNeeded = 2*(x+y+z) + 1
 	if not refuel( fuelNeeded ) then
-		unload( true )
+		unload( 3 )
 		pmsg( "Waiting for fuel" )
 		while not refuel( fuelNeeded ) do
 			os.pullEvent( "turtle_inventory" )
 		end
 	else
-		unload( true )
+		unload( 3 )
 	end
 
 	pmsg( "Resuming mining..." )
@@ -106,7 +106,7 @@ local function collect()
 			nCount = data.count
 
 			-- Drop cobblestone if we already have a stack
-			if data.name == "minecraft:cobblestone" && data.count == 64 then
+			if data.name == "minecraft:cobblestone" and data.count == 64 then
 				local oldS = turtle.getSelectedSlot()
 				turtle.select(n) turtle.dropUp() turtle.select(oldS)
 				nCount = 0
@@ -389,7 +389,7 @@ pmsg( "Returning to surface..." )
 
 -- Return to where we started
 goTo( 0,0,0,0,-1 )
-unload( false )
+unload( 0 )
 goTo( 0,0,0,0,1 )
 
 -- Seal the hole
