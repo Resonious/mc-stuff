@@ -364,9 +364,9 @@ pmsg( "Excavating..." )
 
 local reseal = false
 turtle.select(1)
-if turtle.digDown() then
-	reseal = true
-end
+--if turtle.digDown() then
+	--reseal = true
+--end
 
 local alternate = 0
 local done = false
