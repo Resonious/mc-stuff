@@ -3,7 +3,7 @@ local modem = peripheral.wrap("back")
 
 local tArgs = { ... }
 
-local listenCh -1
+local listenCh = -1
 if #tArgs > 1 then listenCh = tonumber(tArgs[1]) end
 
 local turtleState = {
