@@ -3,7 +3,7 @@ local modem = peripheral.wrap("back")
 
 local tArgs = { ... }
 
-local listenCh 1
+local listenCh -1
 if #tArgs > 1 then listenCh = tonumber(tArgs[1]) end
 
 local turtleState = {
@@ -52,7 +52,7 @@ local function render()
     glass.sync()
   else
     term.clear()
-    print("=========================================")
+    print("==============CH: "..listenCh.."=============")
     print(turtleState.message)
     print("---")
     write(turtleState.items)
@@ -73,7 +73,7 @@ local function receive()
   while true do
     local event, side, ch, replyCh, message, dist = os.pullEvent("modem_message")
 
-    if ch == listenCh then
+    if listenCh < 0 or ch == listenCh then
       local prefix = string.sub(message,0,4)
       local payload = string.sub(message,5)
 
