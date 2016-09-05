@@ -1,16 +1,17 @@
 -- This is a modified copy of the build-in excavate program
 
 local tArgs = { ... }
-if #tArgs < 1 or #tArgs > 4 then
-	print( "Usage: excavate <diameter> [<depth> <forward> <right>]" )
+if #tArgs < 2 or #tArgs > 5 then
+	print( "Usage: excavate <ch> <diameter> [<depth> <forward> <right>]" )
 	return
 end
 
 -- Network functions for reporting stuff:
 local modem = peripheral.wrap("right")
+local channel = tonumber(tArgs[1])
 
 local function message(msg)
-	modem.transmit(1, 2, "msg:"..msg)
+	modem.transmit(channel, 222, "msg:"..msg)
 end
 
 local function pmsg(msg)
@@ -34,11 +35,11 @@ local function reportInv()
 		report = report..name..": x"..count.."\n"
 	end
 
-	modem.transmit(1,2, report)
+	modem.transmit(channel,222, report)
 end
 
 -- Mine in a quarry pattern until we hit something we can't dig
-local size = tonumber( tArgs[1] )
+local size = tonumber( tArgs[2] )
 if size < 1 then
 	pmsg( "Excavate diameter must be positive" )
 	return
@@ -48,9 +49,9 @@ local xOffs = 0
 local yOffs = 0
 local zOffs = 0
 
-if #tArgs >= 2 then yOffs = tonumber( tArgs[2] ) end
-if #tArgs >= 3 then zOffs = tonumber( tArgs[3] ) end
-if #tArgs >= 4 then xOffs = tonumber( tArgs[4] ) end
+if #tArgs >= 3 then yOffs = tonumber( tArgs[3] ) end
+if #tArgs >= 4 then zOffs = tonumber( tArgs[4] ) end
+if #tArgs >= 5 then xOffs = tonumber( tArgs[5] ) end
 
 local depth = 0
 local unloaded = 0

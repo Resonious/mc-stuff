@@ -1,6 +1,11 @@
 local glass = peripheral.wrap("left")
 local modem = peripheral.wrap("back")
 
+local tArgs = { ... }
+
+local listenCh 1
+if #tArgs > 1 then listenCh = tonumber(tArgs[1]) end
+
 local turtleState = {
   message = "no message yet",
   items   = "...\nno item report yet"
@@ -19,31 +24,40 @@ local function split(inputstr, sep)
 end
 
 local function render()
-  glass.clear()
+  if glass then
+    glass.clear()
 
-  local x = 1
-  local y = 1
+    local x = 1
+    local y = 1
 
-  -- Render time
-  glass.addBox(x,y,80,10,0xFFFFFF,0.2)
-  time = textutils.formatTime(os.time(), false)
-  glass.addText(x+4,y+1,"TIME: " .. time, 0xFF0000)
-  y = y + 12
+    -- Render time
+    glass.addBox(x,y,80,10,0xFFFFFF,0.2)
+    time = textutils.formatTime(os.time(), false)
+    glass.addText(x+4,y+1,"TIME: " .. time, 0xFF0000)
+    y = y + 12
 
-  -- Render turtle state
-  local itemLines = split(turtleState.items, "\n")
-  local h = 13 + #itemLines * 10
+    -- Render turtle state
+    local itemLines = split(turtleState.items, "\n")
+    local h = 13 + #itemLines * 10
 
-  glass.addBox(x,y, 150,h, 0xFFFF00, 0.2)
-  glass.addText(x+4,y+1, turtleState.message, 0x000000)
-  y = y + 11
+    glass.addBox(x,y, 150,h, 0xFFFF00, 0.2)
+    glass.addText(x+4,y+1, turtleState.message, 0x000000)
+    y = y + 11
 
-  for i,str in ipairs(itemLines) do
-    glass.addText(x+4,y+1, str, 0x000000)
-    y = y + 9
+    for i,str in ipairs(itemLines) do
+      glass.addText(x+4,y+1, str, 0x000000)
+      y = y + 9
+    end
+
+    glass.sync()
+  else
+    term.clear()
+    print("=========================================")
+    print(turtleState.message)
+    print("---")
+    write(turtleState.items)
+    print("=========================================")
   end
-
-  glass.sync()
 end
 
 local function telltime()
@@ -57,17 +71,17 @@ local function receive()
   modem.open(1)
 
   while true do
-    local x, event, side, replyCh, message, dist = os.pullEvent("modem_message")
+    local event, side, ch, replyCh, message, dist = os.pullEvent("modem_message")
 
-    local prefix = string.sub(message,0,4)
-    local payload = string.sub(message,5)
+    if ch == listenCh then
+      local prefix = string.sub(message,0,4)
+      local payload = string.sub(message,5)
 
-    if prefix == "msg:" then
-      turtleState.message = payload
-      print("turtle: "..payload)
-    elseif prefix == "inv:" then
-      turtleState.items = payload
-      write("---------------------\n"..payload)
+      if prefix == "msg:" then
+        turtleState.message = payload
+      elseif prefix == "inv:" then
+        turtleState.items = payload
+      end
     end
   end
 end
