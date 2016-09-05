@@ -1,10 +1,10 @@
 local modem = peripheral.wrap("back")
-local ch = 50001
+local ch = 50002
 
-modem.open(ch+1)
+modem.open(ch)
 
 local function send(msg)
-  modem.transmit(ch, ch+1, msg)
+  modem.transmit(ch-1, ch, msg)
 end
 
 local function input()

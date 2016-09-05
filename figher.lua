@@ -1,4 +1,4 @@
-local modem = peripheral.wrap("back")
+local modem = peripheral.wrap("right")
 local ch = 50001
 
 modem.open(ch)
@@ -55,6 +55,7 @@ end
 
 while true do
   local event, side, _ch, rch, msg, dist = os.pullEvent("modem_message")
+  rch = ch + 1
 
   if     msg == '^'    then move(rch, "forward")
   elseif msg == 'v'    then move(rch, "backward")
