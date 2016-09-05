@@ -4,7 +4,8 @@ local modem = peripheral.wrap("back")
 local tArgs = { ... }
 
 local listenCh = -1
-if #tArgs >= 1 then listenCh = tonumber(tArgs[1]) end
+if #tArgs >= 1 then listenCh = tonumber(tArgs[1])
+else print("please specify listen channel") return end
 
 local turtleState = {
   message = "no message yet",
@@ -52,11 +53,11 @@ local function render()
     glass.sync()
   else
     term.clear()
-    print("==============CH: "..listenCh.."=============")
+    print("==CH: "..listenCh.."==")
     print(turtleState.message)
-    print("---")
+    print("---inv:")
     write(turtleState.items)
-    print("=========================================")
+    print("========")
   end
 end
 
@@ -68,20 +69,18 @@ local function telltime()
 end
 
 local function receive()
-  modem.open(1)
+  modem.open(listenCh)
 
   while true do
     local event, side, ch, replyCh, message, dist = os.pullEvent("modem_message")
 
-    if listenCh < 0 or ch == listenCh then
-      local prefix = string.sub(message,0,4)
-      local payload = string.sub(message,5)
+    local prefix = string.sub(message,0,4)
+    local payload = string.sub(message,5)
 
-      if prefix == "msg:" then
-        turtleState.message = payload
-      elseif prefix == "inv:" then
-        turtleState.items = payload
-      end
+    if prefix == "msg:" then
+      turtleState.message = payload
+    elseif prefix == "inv:" then
+      turtleState.items = payload
     end
   end
 end
