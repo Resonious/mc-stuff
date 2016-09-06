@@ -5,7 +5,8 @@ modem.open(ch)
 
 local function log(rch, msg)
   print(msg)
-  modem.transmit(rch, ch, msg)
+  -- rch does not work for some reason (it's nil don't know why)
+  modem.transmit(ch+1, ch, msg)
 end
 
 local function checkFuel(rch)

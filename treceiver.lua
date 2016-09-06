@@ -7,6 +7,8 @@ local listenCh = -1
 if #tArgs >= 1 then listenCh = tonumber(tArgs[1])
 else print("please specify listen channel") return end
 
+local sendCh = 1000 + listenCh
+
 local turtleState = {
   message = "no message yet",
   items   = "...\nno item report yet"
@@ -39,7 +41,7 @@ local function render()
 
     -- Render turtle state
     local itemLines = split(turtleState.items, "\n")
-    local h = 13 + #itemLines * 10
+    local h = 13 + #itemLines * 9
 
     glass.addBox(x,y, 150,h, 0xFFFF00, 0.2)
     glass.addText(x+4,y+1, turtleState.message, 0x000000)
@@ -82,6 +84,8 @@ local function receive()
     elseif prefix == "inv:" then
       turtleState.items = payload
     end
+
+    modem.transmit(sendCh, sendCh+1, message)
   end
 end
 
